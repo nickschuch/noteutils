@@ -37,9 +37,9 @@ func NewCommand() *cobra.Command {
 				arch   = runtime.GOARCH
 			)
 
-			fmt.Println("validating", binary, "for arch:", arch, "using spec:", options.Spec)
+			fmt.Println("Validating", binary, "for arch:", arch, "using spec:", options.Spec)
 
-			probes, err := notes.LoadFromFile(binary)
+			have, err := notes.LoadFromFile(binary)
 			if err != nil {
 				return fmt.Errorf("loading notes from file: %w", err)
 			}
@@ -49,11 +49,13 @@ func NewCommand() *cobra.Command {
 				return fmt.Errorf("failed to load specification: %w", err)
 			}
 
-			if diff := cmp.Diff(probes, spec); diff != "" {
-				fmt.Println("Mismatch:")
+			if _, ok := spec.Probes[arch]; !ok {
+				return fmt.Errorf("architecture not found in spec file: %w", arch)
+			}
+
+			if diff := cmp.Diff(have, spec.Probes[arch]); diff != "" {
 				fmt.Println(diff)
-			} else {
-				fmt.Println("Equal")
+				return fmt.Errorf("mistmatch found")
 			}
 
 			return nil
@@ -66,7 +68,6 @@ func NewCommand() *cobra.Command {
 }
 
 func loadSpecification(path string) (*Specification, error) {
-
 	data, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("failed to read file: %w", err)
