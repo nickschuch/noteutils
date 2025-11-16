@@ -6,6 +6,7 @@ import (
 	"runtime"
 
 	"github.com/google/go-cmp/cmp"
+	"github.com/google/go-cmp/cmp/cmpopts"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 
@@ -50,10 +51,12 @@ func NewCommand() *cobra.Command {
 			}
 
 			if _, ok := spec.Probes[arch]; !ok {
-				return fmt.Errorf("architecture not found in spec file: %w", arch)
+				return fmt.Errorf("architecture not found in spec file: %s", arch)
 			}
 
-			if diff := cmp.Diff(have, spec.Probes[arch]); diff != "" {
+			if diff := cmp.Diff(have, spec.Probes[arch], cmpopts.SortSlices(func(a, b notes.Probe) bool {
+				return a.Name < b.Name
+			})); diff != "" {
 				fmt.Println(diff)
 				return fmt.Errorf("mistmatch found")
 			}
