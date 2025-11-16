@@ -61,6 +61,8 @@ func NewCommand() *cobra.Command {
 				return fmt.Errorf("mistmatch found")
 			}
 
+			fmt.Println("Specification matches notes")
+
 			return nil
 		},
 	}
