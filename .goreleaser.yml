@@ -16,7 +16,11 @@ builds:
 archives:
   - id: nix
     builds: [ noteutils ]
-    name_template: '{{ .ProjectName }}_{{ .Version }}_{{ if eq .Os "darwin" }}macOS{{ else }}{{ .Os }}{{ end }}_{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}'
+    name_template: >-
+      {{ .ProjectName }}_
+      {{- .Version }}_
+      {{- if eq .Os "darwin" }}macOS{{ else }}{{ .Os }}{{ end }}_
+      {{- if eq .Arch "arm64" }}aarch64{{ else }}{{ .Arch }}{{ end }}
     wrap_in_directory: true
     format: tar.gz
 
