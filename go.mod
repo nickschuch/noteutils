@@ -5,7 +5,7 @@ go 1.25.1
 require (
 	github.com/charmbracelet/fang v0.4.4
 	github.com/google/go-cmp v0.7.0
-	github.com/spf13/cobra v1.10.1
+	github.com/spf13/cobra v1.10.2
 	gopkg.in/yaml.v3 v3.0.1
 )
 
